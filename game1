@@ -1,0 +1,77 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class FlappyDragon extends JPanel implements ActionListener {
+
+    private Timer timer;
+    private int x, y, dx, dy;
+    private Image dragonImage;
+    private Image pipeImage;
+    private int pipeX, pipeY;
+    private int score;
+
+    public FlappyDragon() {
+        setBackground(Color.cyan);
+        setPreferredSize(new Dimension(400, 500));
+        setFocusable(true);
+
+        dragonImage = new ImageIcon("baby_dragon.png").getImage();
+        pipeImage = new ImageIcon("pipe.png").getImage();
+
+        x = 100;
+        y = 250;
+        dx = 0;
+        dy = 0;
+        score = 0;
+
+        timer = new Timer(20, this);
+        timer.start();
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.drawImage(dragonImage, x, y, 50, 50, null);
+
+        g.drawImage(pipeImage, pipeX, pipeY, 50, 100, null);
+
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("Score: " + score, 20, 30);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        x += dx;
+        y += dy;
+
+        if (y < 0 || y > 500 - 50) {
+            timer.stop();
+        }
+
+        if (x < pipeX + 50 && x > pipeX - 50 && y < pipeY + 100 && y > pipeY) {
+            timer.stop();
+        }
+
+        if (x == pipeX + 50) {
+            score++;
+        }
+
+        pipeX -= 2;
+
+        if (pipeX < -50) {
+            pipeX = 400;
+            pipeY = (int) (Math.random() * (400 - 100));
+        }
+
+        repaint();
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Flappy Dragon");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().add(new FlappyDragon());
+        frame.pack();
+        frame.setVisible(true);
+    }
+}
